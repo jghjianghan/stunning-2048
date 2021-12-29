@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.util.Pair;
 
 /**
@@ -72,19 +74,82 @@ public class BoardUtil {
     }
     
     public static Move[] getAvailableMoves(long code){
-        //TODO
-        return null;
+        List<Move> availableMoves = new ArrayList<>(4);
+        
+        for (Move move : Move.values()){
+            if (isMoveValid(code, move)){
+                availableMoves.add(move);
+            }
+        }       
+        
+        return availableMoves.toArray(new Move[0]);
     }
+    
+    private static boolean isMoveValid(long code, Move move){
+        switch(move){
+            case LEFT:
+                for(int i = 0; i<4; i++){
+                    for (int j = 1; j < 4; j++) {
+                        int currExp = getValueAt(code, (i<<2) + j);
+                        if (currExp != 0){
+                            int leftExp = getValueAt(code, (i<<2) + (j-1));
+                            if (leftExp == 0 || leftExp == currExp)
+                                return true;
+                        }
+                    }
+                }
+                break;
+            case RIGHT:
+                for(int i = 0; i<4; i++){
+                    for (int j = 0; j < 3; j++) {
+                        int currExp = getValueAt(code, (i<<2) + j);
+                        if (currExp != 0){
+                            int rightExp = getValueAt(code, (i<<2) + (j+1));
+                            if (rightExp == 0 || rightExp == currExp)
+                                return true;
+                        }
+                    }
+                }
+                break;
+            case UP:
+                for(int i = 1; i<4; i++){
+                    for (int j = 0; j < 4; j++) {
+                        int currExp = getValueAt(code, (i<<2) + j);
+                        if (currExp != 0){
+                            int upExp = getValueAt(code, ((i-1)<<2) + j);
+                            if (upExp == 0 || upExp == currExp)
+                                return true;
+                        }
+                    }
+                }
+                break;
+            case DOWN:
+                for(int i = 0; i<3; i++){
+                    for (int j = 0; j < 4; j++) {
+                        int currExp = getValueAt(code, (i<<2) + j);
+                        if (currExp != 0){
+                            int downExp = getValueAt(code, ((i+1)<<2) + j);
+                            if (downExp == 0 || downExp == currExp)
+                                return true;
+                        }
+                    }
+                }
+                break;
+        }
+        
+        return false;
+    }
+    
     public static Pair<Integer, Long> applyMove(long code, Move move) {
         //TODO
         return null;
     }
     
     /**
-     * Gets the value at some particular position on a board from its coded representation
+     * Gets the exponent value at some particular position on a board from its coded representation
      * @param code The coded representation of the board
      * @param pos The position in the board (0-15). 0 is top-left, 15 is bottom right
-     * @return The value of the board at some position
+     * @return The exponent of the position. Zero exponent means the position is empty
      */
     public static int getValueAt(long code, int pos){
         return (int)((code & (0xfl << (pos * 4))) >>> (pos*4) );
