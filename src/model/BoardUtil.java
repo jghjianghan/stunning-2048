@@ -141,7 +141,41 @@ public class BoardUtil {
     }
     
     public static Pair<Integer, Long> applyMove(long code, Move move) {
-        //TODO
+        switch(move){
+            case LEFT:
+//                for (int row = 0; row < 4; row++)
+//                {
+//                    int col = 1;
+//                    while (col < 4 && getValueAt(code, (row<<2)+col) == 0) // first movable tile
+//                        col++;
+//
+//                    int emptyPointer = 0;
+//
+//                    for (; col < 4; col++)
+//                    {
+//                        if (getValueAt(code, (row<<2)+col) != 0)
+//                        {
+//                            if (board[row][emptyPointer] == board[row][col])
+//                            {
+//                                board[row][emptyPointer++] <<= 1;
+//                                board[row][col] = 0;
+//                            }
+//                            else if (board[row][emptyPointer] == 0)
+//                            {
+//                                board[row][emptyPointer] = board[row][col];
+//                                board[row][col] = 0;
+//                            }
+//                            else
+//                            {
+//                                int temp = board[row][col];
+//                                board[row][col] = 0;
+//                                board[row][++emptyPointer] = temp;
+//                            }
+//                        }
+//                    }
+//                }
+                break;
+        }
         return null;
     }
     
@@ -152,6 +186,17 @@ public class BoardUtil {
      * @return The exponent of the position. Zero exponent means the position is empty
      */
     public static int getValueAt(long code, int pos){
-        return (int)((code & (0xfl << (pos * 4))) >>> (pos*4) );
+        return (int)((code & (0xfl << (pos << 2))) >>> (pos << 2) );
+    }
+    
+    /**
+     * Sets the exponent value at some particular position on a board from its coded representation
+     * @param code The coded representation of the board
+     * @param pos The position in the board (0-15). 0 is top-left, 15 is bottom right
+     * @param value The new value to store
+     * @return The new code
+     */
+    public static long setValueAt(long code, int pos, int value){
+        return (code & (~(0xfl << (pos << 2)))) | ((long)value << (pos<<2));
     }
 }

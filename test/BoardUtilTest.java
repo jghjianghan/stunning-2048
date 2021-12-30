@@ -1,4 +1,5 @@
 
+import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 import model.BoardUtil;
 import model.Move;
@@ -56,6 +57,28 @@ public class BoardUtilTest {
         long code = BoardUtil.encode(board);
         for (int i = 0; i < 16; i++) {
             Assert.assertEquals(BoardUtil.getValueAt(code, i), board[i / 4][i % 4]);
+        }
+    }
+    
+    @Test
+    public void testSetValueAt() {
+        int board[][] = new int[4][4];
+        int board2[][] = new int[4][4];
+        int resultBoard[][];        
+
+        int values[] = {2, 0, 1, 9, 12, 15};
+        
+        for (int k = 0; k < values.length; k++) {
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    long code = BoardUtil.encode(board);
+                    long resultCode = BoardUtil.setValueAt(code, i*4 + j, values[k]);
+                    board2[i][j] = values[k];
+                    resultBoard = BoardUtil.decode(resultCode);
+                    Assert.assertArrayEquals(board2, resultBoard);
+                    board2[i][j] = 0;
+                }
+            }
         }
     }
 
@@ -260,6 +283,7 @@ public class BoardUtilTest {
             {2, 0, 0, 0},};
         Assert.assertArrayEquals(BoardUtil.getAvailableMoves(BoardUtil.encode(board)), new Move[]{Move.RIGHT, Move.UP});
     }
+    
     @Test
     public void testAvailableMoves5() {
         int board[][];
