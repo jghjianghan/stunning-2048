@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 import javafx.util.Pair;
 
 /**
@@ -141,42 +142,88 @@ public class BoardUtil {
     }
     
     public static Pair<Integer, Long> applyMove(long code, Move move) {
+        int point = 0;
         switch(move){
             case LEFT:
-//                for (int row = 0; row < 4; row++)
-//                {
-//                    int col = 1;
-//                    while (col < 4 && getValueAt(code, (row<<2)+col) == 0) // first movable tile
-//                        col++;
-//
-//                    int emptyPointer = 0;
-//
-//                    for (; col < 4; col++)
-//                    {
-//                        if (getValueAt(code, (row<<2)+col) != 0)
-//                        {
-//                            if (board[row][emptyPointer] == board[row][col])
-//                            {
-//                                board[row][emptyPointer++] <<= 1;
-//                                board[row][col] = 0;
-//                            }
-//                            else if (board[row][emptyPointer] == 0)
-//                            {
-//                                board[row][emptyPointer] = board[row][col];
-//                                board[row][col] = 0;
-//                            }
-//                            else
-//                            {
-//                                int temp = board[row][col];
-//                                board[row][col] = 0;
-//                                board[row][++emptyPointer] = temp;
-//                            }
-//                        }
-//                    }
-//                }
+                for (int row = 0; row < 4; row++)
+                {
+                    int col = 1;
+                    while (col < 4 && getValueAt(code, (row<<2)+col) == 0) // first movable tile
+                        col++;
+                    
+                    int pointerPos = row<<2;
+                    int pointerValue = getValueAt(code, pointerPos);
+                    
+                    for (; col < 4; col++)
+                    {
+                        int currentPos = (row<<2)+col;
+                        int currentValue = getValueAt(code, currentPos);
+                        if (currentValue != 0)
+                        {
+                            if (pointerValue == currentValue) //merge
+                            {
+                                point += 1 << (pointerValue+1);
+                                code = setValueAt(code, pointerPos++, pointerValue + 1);
+                                code = setValueAt(code, currentPos, 0);
+                                pointerValue = getValueAt(code, pointerPos);       
+                            }
+                            else if (pointerValue == 0) //move to emptyPointer
+                            {
+                                code = setValueAt(code, pointerPos, currentValue);
+                                pointerValue = currentValue;
+                                code = setValueAt(code, currentPos, 0);
+                            }
+                            else //move to after emptyPointer
+                            {
+                                code = setValueAt(code, currentPos, 0);
+                                code = setValueAt(code, ++pointerPos, currentValue);
+                                pointerValue = currentValue;
+                            }
+                        }
+                    }
+                }
+                break;
+            case RIGHT:
+                for (int row = 0; row < 4; row++)
+                {
+                    int col = 2;
+                    while (col >=0 && getValueAt(code, (row<<2)+col) == 0) // first movable tile
+                        col--;
+                    
+                    int pointerPos = (row<<2) + 3;
+                    int pointerValue = getValueAt(code, pointerPos);
+                    
+                    for (; col >= 0; col--)
+                    {
+                        int currentPos = (row<<2)+col;
+                        int currentValue = getValueAt(code, currentPos);
+                        if (currentValue != 0)
+                        {
+                            if (pointerValue == currentValue) //merge
+                            {
+                                point += 1 << (pointerValue+1);
+                                code = setValueAt(code, pointerPos--, pointerValue + 1);
+                                code = setValueAt(code, currentPos, 0);
+                                pointerValue = getValueAt(code, pointerPos);
+                            }
+                            else if (pointerValue == 0) //move to emptyPointer
+                            {
+                                code = setValueAt(code, pointerPos, currentValue);
+                                pointerValue = currentValue;
+                                code = setValueAt(code, currentPos, 0);
+                            }
+                            else //move to after emptyPointer
+                            {
+                                code = setValueAt(code, currentPos, 0);
+                                code = setValueAt(code, --pointerPos, currentValue);
+                                pointerValue = currentValue;
+                            }
+                        }
+                    }
+                }
                 break;
         }
-        return null;
+        return new Pair<>(point, code);
     }
     
     /**
