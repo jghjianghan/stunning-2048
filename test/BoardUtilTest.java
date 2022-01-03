@@ -373,11 +373,11 @@ public class BoardUtilTest {
             {3, 2, 0, 0},
             {5, 5, 0, 0},
             {5, 5, 5, 0},};
-        
+
         Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.LEFT).getValue(), (Long) BoardUtil.encode(expectedBoard));
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.LEFT).getKey(), (Integer) (4+8+64+32));
+        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.LEFT).getKey(), (Integer) (4 + 8 + 64 + 32));
     }
-    
+
     @Test
     public void testMoveRight() {
         int board[][], expectedBoard[][];
@@ -393,7 +393,6 @@ public class BoardUtilTest {
             {1, 6, 5, 2},
             {0, 0, 11, 6},};
 
-        System.out.println(Arrays.deepToString(BoardUtil.decode(BoardUtil.applyMove(BoardUtil.encode(board), Move.RIGHT).getValue())));
         Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.RIGHT).getValue(), (Long) BoardUtil.encode(expectedBoard));
         Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.RIGHT).getKey(), (Integer) (4 + 2048));
 
@@ -407,13 +406,80 @@ public class BoardUtilTest {
             {0, 0, 2, 3},
             {0, 0, 5, 5},
             {0, 5, 5, 5},};
-        
+
         Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.RIGHT).getValue(), (Long) BoardUtil.encode(expectedBoard));
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.RIGHT).getKey(), (Integer) (4+8+64+32));
+        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.RIGHT).getKey(), (Integer) (4 + 8 + 64 + 32));
     }
 
     @Test
+    public void testMoveUp() {
+        int board[][], expectedBoard[][];
+        board = new int[][]{
+            {1, 0, 0, 1},
+            {2, 4, 3, 1},
+            {1, 6, 5, 2},
+            {10, 10, 6, 0},};
 
+        expectedBoard = new int[][]{
+            {1, 4, 3, 2},
+            {2, 6, 5, 2},
+            {1, 10, 6, 0},
+            {10, 0, 0, 0},};
+
+        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.UP).getValue(), (Long) BoardUtil.encode(expectedBoard));
+        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.UP).getKey(), (Integer) (4));
+
+        board = new int[][]{
+            {1, 2, 4, 5},
+            {1, 0, 4, 4},
+            {2, 2, 4, 4},
+            {3, 2, 4, 5},};
+
+        expectedBoard = new int[][]{
+            {2, 3, 5, 5},
+            {2, 2, 5, 5},
+            {3, 0, 0, 5},
+            {0, 0, 0, 0},};
+
+        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.UP).getValue(), (Long) BoardUtil.encode(expectedBoard));
+        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.UP).getKey(), (Integer) (4 + 8 + 64 + 32));
+    }
+
+    @Test
+    public void testMoveDown() {
+        int board[][], expectedBoard[][];
+        board = new int[][]{
+            {1, 0, 0, 1},
+            {2, 4, 3, 1},
+            {1, 6, 5, 2},
+            {10, 10, 6, 0},};
+
+        expectedBoard = new int[][]{
+            {1, 0, 0, 0},
+            {2, 4, 3, 0},
+            {1, 6, 5, 2},
+            {10, 10, 6, 2},};
+
+        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.DOWN).getValue(), (Long) BoardUtil.encode(expectedBoard));
+        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.DOWN).getKey(), (Integer) (4));
+
+        board = new int[][]{
+            {1, 2, 4, 5},
+            {1, 0, 4, 4},
+            {2, 2, 4, 4},
+            {3, 2, 4, 5},};
+
+        expectedBoard = new int[][]{
+            {0, 0, 0, 0},
+            {2, 0, 0, 5},
+            {2, 2, 5, 5},
+            {3, 3, 5, 5},};
+
+        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.DOWN).getValue(), (Long) BoardUtil.encode(expectedBoard));
+        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.DOWN).getKey(), (Integer) (4 + 8 + 64 + 32));
+    }
+
+    @Test
     public void testPrint() {
         int board[][] = new int[][]{
             {1, 5, 14, 13},

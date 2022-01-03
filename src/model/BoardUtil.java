@@ -222,6 +222,88 @@ public class BoardUtil {
                     }
                 }
                 break;
+            case UP:
+                for (int col = 0; col < 4; col++)
+                {
+                    int row = 1;
+                    while (row < 4 && getValueAt(code, (row<<2)+col) == 0) // first movable tile
+                        row++;
+                    
+                    int pointerPos = col;
+                    int pointerValue = getValueAt(code, pointerPos);
+                    
+                    for (; row < 4; row++)
+                    {
+                        int currentPos = (row<<2)+col;
+                        int currentValue = getValueAt(code, currentPos);
+                        if (currentValue != 0)
+                        {
+                            if (pointerValue == currentValue) //merge
+                            {
+                                point += 1 << (pointerValue+1);
+                                code = setValueAt(code, pointerPos, pointerValue + 1);
+                                pointerPos += 4;
+                                code = setValueAt(code, currentPos, 0);
+                                pointerValue = getValueAt(code, pointerPos);       
+                            }
+                            else if (pointerValue == 0) //move to emptyPointer
+                            {
+                                code = setValueAt(code, pointerPos, currentValue);
+                                pointerValue = currentValue;
+                                code = setValueAt(code, currentPos, 0);
+                            }
+                            else //move to after emptyPointer
+                            {
+                                code = setValueAt(code, currentPos, 0);
+                                pointerPos += 4;
+                                code = setValueAt(code, pointerPos, currentValue);
+                                pointerValue = currentValue;
+                            }
+                        }
+                    }
+                }
+                break;
+            case DOWN:
+                for (int col = 0; col < 4; col++)
+                {
+                    int row = 2;
+                    while (row >=0 && getValueAt(code, (row<<2)+col) == 0) // first movable tile
+                        row--;
+                    
+                    int pointerPos = 12 + col;
+                    int pointerValue = getValueAt(code, pointerPos);
+                    
+                    for (; row >= 0; row--)
+                    {
+                        int currentPos = (row<<2)+col;
+                        int currentValue = getValueAt(code, currentPos);
+                        if (currentValue != 0)
+                        {
+                            if (pointerValue == currentValue) //merge
+                            {
+                                point += 1 << (pointerValue+1);
+                                code = setValueAt(code, pointerPos, pointerValue + 1);
+                                pointerPos -= 4;
+                                code = setValueAt(code, currentPos, 0);
+                                pointerValue = getValueAt(code, pointerPos);       
+                            }
+                            else if (pointerValue == 0) //move to emptyPointer
+                            {
+                                code = setValueAt(code, pointerPos, currentValue);
+                                pointerValue = currentValue;
+                                code = setValueAt(code, currentPos, 0);
+                            }
+                            else //move to after emptyPointer
+                            {
+                                code = setValueAt(code, currentPos, 0);
+                                pointerPos -= 4;
+                                code = setValueAt(code, pointerPos, currentValue);
+                                pointerValue = currentValue;
+                            }
+                        }
+                    }
+                }
+                break;
         }
         return new Pair<>(point, code);
     }
