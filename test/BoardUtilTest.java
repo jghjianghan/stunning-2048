@@ -360,8 +360,8 @@ public class BoardUtilTest {
             {1, 6, 5, 2},
             {11, 6, 0, 0},};
 
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.LEFT).getValue(), (Long) BoardUtil.encode(expectedBoard));
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.LEFT).getKey(), (Integer) (4 + 2048));
+        Assert.assertEquals(BoardUtil.slideTiles(BoardUtil.encode(board), Move.LEFT).getValue(), (Long) BoardUtil.encode(expectedBoard));
+        Assert.assertEquals(BoardUtil.slideTiles(BoardUtil.encode(board), Move.LEFT).getKey(), (Integer) (4 + 2048));
 
         board = new int[][]{
             {1, 1, 2, 3},
@@ -374,8 +374,8 @@ public class BoardUtilTest {
             {5, 5, 0, 0},
             {5, 5, 5, 0},};
 
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.LEFT).getValue(), (Long) BoardUtil.encode(expectedBoard));
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.LEFT).getKey(), (Integer) (4 + 8 + 64 + 32));
+        Assert.assertEquals(BoardUtil.slideTiles(BoardUtil.encode(board), Move.LEFT).getValue(), (Long) BoardUtil.encode(expectedBoard));
+        Assert.assertEquals(BoardUtil.slideTiles(BoardUtil.encode(board), Move.LEFT).getKey(), (Integer) (4 + 8 + 64 + 32));
     }
 
     @Test
@@ -393,8 +393,8 @@ public class BoardUtilTest {
             {1, 6, 5, 2},
             {0, 0, 11, 6},};
 
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.RIGHT).getValue(), (Long) BoardUtil.encode(expectedBoard));
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.RIGHT).getKey(), (Integer) (4 + 2048));
+        Assert.assertEquals(BoardUtil.slideTiles(BoardUtil.encode(board), Move.RIGHT).getValue(), (Long) BoardUtil.encode(expectedBoard));
+        Assert.assertEquals(BoardUtil.slideTiles(BoardUtil.encode(board), Move.RIGHT).getKey(), (Integer) (4 + 2048));
 
         board = new int[][]{
             {1, 1, 2, 3},
@@ -407,8 +407,8 @@ public class BoardUtilTest {
             {0, 0, 5, 5},
             {0, 5, 5, 5},};
 
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.RIGHT).getValue(), (Long) BoardUtil.encode(expectedBoard));
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.RIGHT).getKey(), (Integer) (4 + 8 + 64 + 32));
+        Assert.assertEquals(BoardUtil.slideTiles(BoardUtil.encode(board), Move.RIGHT).getValue(), (Long) BoardUtil.encode(expectedBoard));
+        Assert.assertEquals(BoardUtil.slideTiles(BoardUtil.encode(board), Move.RIGHT).getKey(), (Integer) (4 + 8 + 64 + 32));
     }
 
     @Test
@@ -426,8 +426,8 @@ public class BoardUtilTest {
             {1, 10, 6, 0},
             {10, 0, 0, 0},};
 
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.UP).getValue(), (Long) BoardUtil.encode(expectedBoard));
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.UP).getKey(), (Integer) (4));
+        Assert.assertEquals(BoardUtil.slideTiles(BoardUtil.encode(board), Move.UP).getValue(), (Long) BoardUtil.encode(expectedBoard));
+        Assert.assertEquals(BoardUtil.slideTiles(BoardUtil.encode(board), Move.UP).getKey(), (Integer) (4));
 
         board = new int[][]{
             {1, 2, 4, 5},
@@ -441,8 +441,8 @@ public class BoardUtilTest {
             {3, 0, 0, 5},
             {0, 0, 0, 0},};
 
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.UP).getValue(), (Long) BoardUtil.encode(expectedBoard));
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.UP).getKey(), (Integer) (4 + 8 + 64 + 32));
+        Assert.assertEquals(BoardUtil.slideTiles(BoardUtil.encode(board), Move.UP).getValue(), (Long) BoardUtil.encode(expectedBoard));
+        Assert.assertEquals(BoardUtil.slideTiles(BoardUtil.encode(board), Move.UP).getKey(), (Integer) (4 + 8 + 64 + 32));
     }
 
     @Test
@@ -460,8 +460,8 @@ public class BoardUtilTest {
             {1, 6, 5, 2},
             {10, 10, 6, 2},};
 
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.DOWN).getValue(), (Long) BoardUtil.encode(expectedBoard));
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.DOWN).getKey(), (Integer) (4));
+        Assert.assertEquals(BoardUtil.slideTiles(BoardUtil.encode(board), Move.DOWN).getValue(), (Long) BoardUtil.encode(expectedBoard));
+        Assert.assertEquals(BoardUtil.slideTiles(BoardUtil.encode(board), Move.DOWN).getKey(), (Integer) (4));
 
         board = new int[][]{
             {1, 2, 4, 5},
@@ -475,8 +475,8 @@ public class BoardUtilTest {
             {2, 2, 5, 5},
             {3, 3, 5, 5},};
 
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.DOWN).getValue(), (Long) BoardUtil.encode(expectedBoard));
-        Assert.assertEquals(BoardUtil.applyMove(BoardUtil.encode(board), Move.DOWN).getKey(), (Integer) (4 + 8 + 64 + 32));
+        Assert.assertEquals(BoardUtil.slideTiles(BoardUtil.encode(board), Move.DOWN).getValue(), (Long) BoardUtil.encode(expectedBoard));
+        Assert.assertEquals(BoardUtil.slideTiles(BoardUtil.encode(board), Move.DOWN).getKey(), (Integer) (4 + 8 + 64 + 32));
     }
 
     @Test

@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javafx.util.Pair;
 
 /**
@@ -69,8 +70,16 @@ public class BoardUtil {
     }
     
     public static long generateInitialBoard() {
-        //TODO
-        return 0;
+        Random rand = new Random();
+        int pos1 = rand.nextInt(16);
+        int pos2 = pos1;
+        while(pos2 == pos1){
+            pos2 = rand.nextInt(16);
+        }
+        int value1 = (Math.random() >= 0.9) ? 2 : 1;
+        int value2 = (Math.random() >= 0.9) ? 2 : 1;
+        
+        return setValueAt(setValueAt(0, pos1, value1), pos2, value2);
     }
     
     public static Move[] getAvailableMoves(long code){
@@ -140,7 +149,7 @@ public class BoardUtil {
         return false;
     }
     
-    public static Pair<Integer, Long> applyMove(long code, Move move) {
+    public static Pair<Integer, Long> slideTiles(long code, Move move) {
         int point = 0;
         switch(move){
             case LEFT:
@@ -305,6 +314,27 @@ public class BoardUtil {
                 break;
         }
         return new Pair<>(point, code);
+    }
+    
+    public static Pair<Integer, Long> applyMove(long code, Move move){
+        Pair<Integer, Long> result = slideTiles(code, move);
+        
+        code = result.getValue();
+        
+        ArrayList<Integer> emptyCells = new ArrayList<>();
+        for(int i = 0; i<16; i++){
+            if (getValueAt(code, i) == 0){
+                emptyCells.add(i);
+            }
+        }
+        if (emptyCells.isEmpty()){
+            return result;
+        } else {    
+            int value = (Math.random() >= 0.9) ? 2 : 1;
+            Random rand = new Random();
+            int pos = emptyCells.get(rand.nextInt(emptyCells.size()));
+            return new Pair(result.getKey(), setValueAt(code, pos, value));
+        }
     }
     
     /**

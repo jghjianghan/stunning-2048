@@ -1,19 +1,35 @@
 package view;
 
+import controller.GameController;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import javax.swing.*;
-import java.awt.*;
-import java.util.Vector;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import model.BoardUtil;
+import model.Move;
 
 /**
  *
  * @author Jiang Han
  */
-public class GraphicalUI extends JPanel {
+public final class GraphicalUI extends JPanel implements UI, ActionListener, KeyListener {
     
     public static final int SCREEN_WIDTH = 500;
     public static final int SCREEN_HEIGHT = 500;
     private static final int MARGIN = 10;
-    private static final int TILE_LEN = (SCREEN_WIDTH - 5 * MARGIN) / 4;
+    private static final int TILE_LEN = (SCREEN_WIDTH -5 * MARGIN) / 4;
+    
+    int lastBoard;
+    
+    private final ConcurrentLinkedQueue<List<Tile>> tileListQueue = new ConcurrentLinkedQueue<>();
+    private GameController controller;
     
     private static final Color[] COLOR_LIST = {
         new Color(205,193,180), //abu2
@@ -35,15 +51,10 @@ public class GraphicalUI extends JPanel {
         new Color(243,202,218), 
     };
     
-    private Vector<Tile> tiles = new Vector<>();
+    public GraphicalUI(){
+        addKeyListener(this);
+    }
     
-    int board[][] = {
-        {1, 5, 14, 13},
-        {7, 10, 8, 12},
-        {0, 6, 2, 3},
-        {15, 9, 11, 4},
-    };
-        
     @Override
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
@@ -52,25 +63,64 @@ public class GraphicalUI extends JPanel {
         
         Graphics2D g2d = (Graphics2D) g;
         
-        tiles.clear();
+        if (!tileListQueue.isEmpty()){
+            List<Tile> tiles = tileListQueue.peek();
+            for(Tile tile : tiles){
+                tile.draw(g2d);
+            }
+            
+            if (tileListQueue.size() > 1)
+                tileListQueue.poll();
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+         repaint();
+    }
+
+    @Override
+    public void displayBoard(long boardCode) {
+        int[][] board = BoardUtil.decode(boardCode);
+        List<Tile> tiles = new ArrayList();
         for(int i = 0; i<board.length; i++){
             for (int j = 0; j < board[i].length; j++) {
                 tiles.add(new Tile(MARGIN * (j+1) + j * TILE_LEN, MARGIN * (i+1) + i * TILE_LEN, COLOR_LIST[board[i][j]], TILE_LEN, board[i][j]));
             }
         }
-        
-        for(Tile tile : tiles){
-            tile.draw(g2d);
-        }
+        tileListQueue.add(tiles);
     }
-    
-    public static void main(String[] args) {
-        JFrame f = new JFrame();
-        JPanel panel = new GraphicalUI();
-        f.getContentPane().add("Center", panel);
-        f.getContentPane().setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
-        f.pack();
-        f.setVisible(true);
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    @Override
+    public void start(long initialBoard, GameController controller) {
+        this.controller = controller;
+        displayBoard(initialBoard);
+        Timer timer = new Timer(20, this);
+        timer.start();
+    }
+
+    @Override
+    public void keyTyped(KeyEvent arg0) {}
+
+    @Override
+    public void keyPressed(KeyEvent arg0) {}
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        System.out.println(e.getKeyCode());
+        switch (e.getKeyCode()) {
+            case 38: //up
+                controller.moveBoard(Move.UP);
+                break;
+            case 40: //down
+                controller.moveBoard(Move.DOWN);
+                break;
+            case 37: //left
+                controller.moveBoard(Move.LEFT);
+                break;
+            case 39: //right
+                controller.moveBoard(Move.RIGHT);
+                break;
+        }
     }
 }

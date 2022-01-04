@@ -1,5 +1,10 @@
 
+import controller.GameController;
+import java.awt.Dimension;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import model.BoardUtil;
+import view.GraphicalUI;
 
 /**
  *
@@ -7,7 +12,15 @@ import model.BoardUtil;
  */
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello");
-        BoardUtil.print(0);
+        JFrame f = new JFrame();
+        GraphicalUI panel = new GraphicalUI();
+        panel.setFocusable(true);
+        f.getContentPane().add("Center", panel);
+        f.getContentPane().setPreferredSize(new Dimension(GraphicalUI.SCREEN_WIDTH, GraphicalUI.SCREEN_HEIGHT));
+        f.pack();
+        f.setVisible(true);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        new GameController(panel);
     }
 }
