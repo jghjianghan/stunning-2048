@@ -1,9 +1,11 @@
 
 package controller;
 
+import java.util.List;
 import javafx.util.Pair;
 import model.BoardUtil;
 import model.Move;
+import view.TileTransition;
 import view.UI;
 
 /**
@@ -22,15 +24,17 @@ public class GameController {
     }
     
     public void moveBoard(Move move){
-        Move[] availableMoves = BoardUtil.getAvailableMoves(board);
-        for(int i = 0; i<availableMoves.length; i++){
-            if (availableMoves[i] == move){
-                Pair<Integer, Long> result = BoardUtil.applyMove(board, move);
-                board = result.getValue();
-                score += result.getKey();
-                ui.displayBoard(board);
-                break;
-            }
+        if (BoardUtil.isMoveValid(board, move)){
+            Pair<Integer, Long> result = BoardUtil.applyMove(board, move);
+            List<TileTransition> transitions = BoardUtil.generateSlidingTransitions(board, move);
+            
+            board = result.getValue();
+            score += result.getKey();
+            
+            ui.displayBoard(board, transitions);
+        }
+        if (BoardUtil.isGameOver(board)){
+            //show game over
         }
     }
 }

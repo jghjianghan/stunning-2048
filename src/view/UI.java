@@ -1,6 +1,7 @@
 package view;
 
 import controller.GameController;
+import java.util.List;
 
 /**
  *
@@ -8,6 +9,5 @@ import controller.GameController;
  */
 public interface UI {
     public void start(long initialBoard, GameController controller);
-    public void displayBoard(long boardCode);
-    
+    public void displayBoard(long newBoardCode, List<TileTransition> transitionList);    
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javafx.util.Pair;
+import view.TileTransition;
 
 /**
  * 
@@ -20,6 +21,9 @@ public class BoardUtil {
     Dalam kode:
     [15][14][13][12][11]...[2][1][0]
     */
+    
+    private static int lastNewPos;
+    private static int lastNewValue;
     
     /**
      * Converts board into a printable string
@@ -94,7 +98,7 @@ public class BoardUtil {
         return availableMoves.toArray(new Move[0]);
     }
     
-    private static boolean isMoveValid(long code, Move move){
+    public static boolean isMoveValid(long code, Move move){
         switch(move){
             case LEFT:
                 for(int i = 0; i<4; i++){
@@ -147,6 +151,10 @@ public class BoardUtil {
         }
         
         return false;
+    }
+    
+    public static boolean isGameOver(long code){
+        return getAvailableMoves(code).length == 0;
     }
     
     public static Pair<Integer, Long> slideTiles(long code, Move move) {
@@ -316,6 +324,215 @@ public class BoardUtil {
         return new Pair<>(point, code);
     }
     
+    public static List<TileTransition> generateSlidingTransitions(long code, Move move){
+        List<TileTransition> transitions = new ArrayList<>();
+        int newRow = lastNewPos / 4;
+        int newCol = lastNewPos % 4;
+        transitions.add(new TileTransition(newRow, newCol, newRow, newCol, lastNewValue, 0, 1)); //create new tile
+        
+        switch(move){
+            case LEFT:
+                for (int row = 0; row < 4; row++)
+                {
+                    transitions.add(new TileTransition(row, 0, row, 0, getValueAt(code, (row << 2))));
+                    int col = 1;
+                    while (col < 4 && getValueAt(code, (row<<2)+col) == 0) // first movable tile
+                    {
+                        //transisi diam di tempat
+                        transitions.add(new TileTransition(row, col, row, col, getValueAt(code, (row << 2) + col)));
+                        col++;
+                    }
+                    
+                    int pointerPos = row<<2;
+                    int pointerValue = getValueAt(code, pointerPos);
+                    
+                    for (; col < 4; col++)
+                    {
+                        int currentPos = (row<<2)+col;
+                        int currentValue = getValueAt(code, currentPos);
+                        if (currentValue != 0)
+                        {
+                            if (pointerValue == currentValue) //merge
+                            {
+                                transitions.add(new TileTransition(row, col, row, pointerPos % 4, currentValue));
+                                
+                                code = setValueAt(code, pointerPos++, pointerValue + 1);
+                                code = setValueAt(code, currentPos, 0);
+                                pointerValue = getValueAt(code, pointerPos);       
+                            }
+                            else if (pointerValue == 0) //move to emptyPointer
+                            {
+                                transitions.add(new TileTransition(row, col, row, pointerPos % 4, currentValue));
+                                
+                                code = setValueAt(code, pointerPos, currentValue);
+                                pointerValue = currentValue;
+                                code = setValueAt(code, currentPos, 0);
+                            }
+                            else //move to after emptyPointer
+                            {
+                                code = setValueAt(code, currentPos, 0);
+                                code = setValueAt(code, ++pointerPos, currentValue);
+                                pointerValue = currentValue;
+                                
+                                transitions.add(new TileTransition(row, col, row, pointerPos % 4, currentValue));
+                            }
+                        }
+                    }
+                }
+                break;
+            case RIGHT:
+                for (int row = 0; row < 4; row++)
+                {
+                    transitions.add(new TileTransition(row, 3, row, 3, getValueAt(code, (row << 2) + 3)));
+                    int col = 2;
+                    while (col >=0 && getValueAt(code, (row<<2)+col) == 0) // first movable tile
+                    {
+                        transitions.add(new TileTransition(row, col, row, col, getValueAt(code, (row << 2) + col)));
+                        col--;
+                    }
+                    
+                    int pointerPos = (row<<2) + 3;
+                    int pointerValue = getValueAt(code, pointerPos);
+                    
+                    for (; col >= 0; col--)
+                    {
+                        int currentPos = (row<<2)+col;
+                        int currentValue = getValueAt(code, currentPos);
+                        if (currentValue != 0)
+                        {
+                            if (pointerValue == currentValue) //merge
+                            {
+                                transitions.add(new TileTransition(row, col, row, pointerPos % 4, currentValue));
+                                
+                                code = setValueAt(code, pointerPos--, pointerValue + 1);
+                                code = setValueAt(code, currentPos, 0);
+                                pointerValue = getValueAt(code, pointerPos);
+                            }
+                            else if (pointerValue == 0) //move to emptyPointer
+                            {
+                                transitions.add(new TileTransition(row, col, row, pointerPos % 4, currentValue));
+                                
+                                code = setValueAt(code, pointerPos, currentValue);
+                                pointerValue = currentValue;
+                                code = setValueAt(code, currentPos, 0);
+                            }
+                            else //move to after emptyPointer
+                            {
+                                code = setValueAt(code, currentPos, 0);
+                                code = setValueAt(code, --pointerPos, currentValue);
+                                pointerValue = currentValue;
+                                
+                                transitions.add(new TileTransition(row, col, row, pointerPos % 4, currentValue));
+                            }
+                        }
+                    }
+                }
+                break;
+            case UP:
+                for (int col = 0; col < 4; col++)
+                {
+                    transitions.add(new TileTransition(0, col, 0, col, getValueAt(code, col)));
+                    int row = 1;
+                    while (row < 4 && getValueAt(code, (row<<2)+col) == 0) // first movable tile
+                    {
+                        transitions.add(new TileTransition(row, col, row, col, getValueAt(code, (row << 2) + col)));
+                        row++;
+                    }
+                    
+                    int pointerPos = col;
+                    int pointerValue = getValueAt(code, pointerPos);
+                    
+                    for (; row < 4; row++)
+                    {
+                        int currentPos = (row<<2)+col;
+                        int currentValue = getValueAt(code, currentPos);
+                        if (currentValue != 0)
+                        {
+                            if (pointerValue == currentValue) //merge
+                            {
+                                transitions.add(new TileTransition(row, col, pointerPos / 4, col, currentValue));
+                                    
+                                code = setValueAt(code, pointerPos, pointerValue + 1);
+                                pointerPos += 4;
+                                code = setValueAt(code, currentPos, 0);
+                                pointerValue = getValueAt(code, pointerPos);       
+                            }
+                            else if (pointerValue == 0) //move to emptyPointer
+                            {
+                                transitions.add(new TileTransition(row, col, pointerPos / 4, col, currentValue));
+                                
+                                code = setValueAt(code, pointerPos, currentValue);
+                                pointerValue = currentValue;
+                                code = setValueAt(code, currentPos, 0);
+                            }
+                            else //move to after emptyPointer
+                            {
+                                code = setValueAt(code, currentPos, 0);
+                                pointerPos += 4;
+                                code = setValueAt(code, pointerPos, currentValue);
+                                pointerValue = currentValue;
+                                
+                                transitions.add(new TileTransition(row, col, pointerPos / 4, col, currentValue));
+                            }
+                        }
+                    }
+                }
+                break;
+            case DOWN:
+                for (int col = 0; col < 4; col++)
+                {
+                    transitions.add(new TileTransition(3, col, 3, col, getValueAt(code, 12 + col)));
+                    int row = 2;
+                    while (row >=0 && getValueAt(code, (row<<2)+col) == 0) // first movable tile
+                    {
+                        transitions.add(new TileTransition(row, col, row, col, getValueAt(code, (row << 2) + col)));
+                        row--;
+                    }
+                    
+                    int pointerPos = 12 + col;
+                    int pointerValue = getValueAt(code, pointerPos);
+                    
+                    for (; row >= 0; row--)
+                    {
+                        int currentPos = (row<<2)+col;
+                        int currentValue = getValueAt(code, currentPos);
+                        if (currentValue != 0)
+                        {
+                            if (pointerValue == currentValue) //merge
+                            {
+                                transitions.add(new TileTransition(row, col, pointerPos / 4, col, currentValue));
+
+                                code = setValueAt(code, pointerPos, pointerValue + 1);
+                                pointerPos -= 4;
+                                code = setValueAt(code, currentPos, 0);
+                                pointerValue = getValueAt(code, pointerPos);       
+                            }
+                            else if (pointerValue == 0) //move to emptyPointer
+                            {
+                                transitions.add(new TileTransition(row, col, pointerPos / 4, col, currentValue));
+                                
+                                code = setValueAt(code, pointerPos, currentValue);
+                                pointerValue = currentValue;
+                                code = setValueAt(code, currentPos, 0);
+                            }
+                            else //move to after emptyPointer
+                            {
+                                code = setValueAt(code, currentPos, 0);
+                                pointerPos -= 4;
+                                code = setValueAt(code, pointerPos, currentValue);
+                                pointerValue = currentValue;
+                                
+                                transitions.add(new TileTransition(row, col, pointerPos / 4, col, currentValue));
+                            }
+                        }
+                    }
+                }
+                break;
+        }
+        
+        return transitions;
+    }
+    
     public static Pair<Integer, Long> applyMove(long code, Move move){
         Pair<Integer, Long> result = slideTiles(code, move);
         
@@ -333,6 +550,8 @@ public class BoardUtil {
             int value = (Math.random() >= 0.9) ? 2 : 1;
             Random rand = new Random();
             int pos = emptyCells.get(rand.nextInt(emptyCells.size()));
+            lastNewPos = pos;
+            lastNewValue = value;
             return new Pair(result.getKey(), setValueAt(code, pos, value));
         }
     }

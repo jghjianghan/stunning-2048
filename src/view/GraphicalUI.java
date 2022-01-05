@@ -80,8 +80,48 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
     }
 
     @Override
-    public void displayBoard(long boardCode) {
+    public void displayBoard(long boardCode, List<TileTransition> transitionList) {
         int[][] board = BoardUtil.decode(boardCode);
+        
+        //board transition
+        int steps = 10;
+        
+        for(int i=0; i<steps; i++){
+            List<Tile> tiles = new ArrayList();
+            //prefill with emtpy tile
+            for(int r = 0; r<board.length; r++){
+                for (int c = 0; c < board[r].length; c++) {
+                    tiles.add(new Tile(MARGIN * (c+1) + c * TILE_LEN, MARGIN * (r+1) + r * TILE_LEN, COLOR_LIST[0], TILE_LEN, 0));
+                }
+            }
+            
+            //fill with transition tile
+            for(TileTransition transition : transitionList){
+                 int prevX = MARGIN * (transition.prevCol+1) + transition.prevCol * TILE_LEN;
+                 int prevY = MARGIN * (transition.prevRow+1) + transition.prevRow * TILE_LEN;
+                 
+                 int nextX = MARGIN * (transition.nextCol+1) + transition.nextCol * TILE_LEN;
+                 int nextY = MARGIN * (transition.nextRow+1) + transition.nextRow * TILE_LEN;
+                 
+                 int diffX = nextX - prevX;
+                 int diffY = nextY - prevY;
+                 double diffSize = transition.nextScale - transition.prevScale;
+                 int currentBoardValue = transition.prevValue;
+                 
+                 double progress = (double) i / steps;
+                 tiles.add(new Tile(
+                         (int)Math.round(prevX + progress * diffX), 
+                         (int)Math.round(prevY + progress * diffY),
+                         COLOR_LIST[currentBoardValue], 
+                         TILE_LEN,
+                         currentBoardValue,
+                         transition.prevScale + progress * diffSize)
+                 );
+            }
+            tileListQueue.add(tiles);
+        }
+        
+        //final board state
         List<Tile> tiles = new ArrayList();
         for(int i = 0; i<board.length; i++){
             for (int j = 0; j < board[i].length; j++) {
@@ -94,8 +134,19 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
     @Override
     public void start(long initialBoard, GameController controller) {
         this.controller = controller;
-        displayBoard(initialBoard);
-        Timer timer = new Timer(20, this);
+        
+        List<TileTransition> transitions = new ArrayList<>();
+        for(int i = 0; i<4; i++){
+            for(int j = 0; j<4; j++){
+                int value = BoardUtil.getValueAt(initialBoard, (i<<2) + j);
+                if (value != 0){
+                    transitions.add(new TileTransition(i, j, i, j, value, 0, 1));
+                }
+            }
+        }
+        
+        displayBoard(initialBoard, transitions);
+        Timer timer = new Timer(10, this);
         timer.start();
     }
 
