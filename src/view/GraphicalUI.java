@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.BoardUtil;
 import model.Move;
 
@@ -34,9 +37,13 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
     private static final int MARGIN = 10;
     private static final int TILE_LEN = (BOARD_WIDTH -5 * MARGIN) / 4;
     
+    private boolean[] hasSeen;
+    private Timer timer;
     int lastBoard;
     
     private final ConcurrentLinkedQueue<List<Tile>> tileListQueue = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Sparkle> sparkleList = new ConcurrentLinkedQueue<>();
+    
     private GameController controller;
     private int score = 0;
     private int scoreIncrement = 0;
@@ -62,8 +69,13 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
         new Color(202,233,235), 
         new Color(243,202,218), 
     };
+    private boolean isGameOver;
     
     public GraphicalUI(){
+        hasSeen = new boolean[20];
+        for(int i = 0; i<=3; i++){
+            hasSeen[i] = true;
+        }
         addKeyListener(this);
     }
     
@@ -123,6 +135,25 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
             if (tileListQueue.size() > 1)
                 tileListQueue.poll();
         }
+        
+        //Fireworks
+        int sparkleCount = sparkleList.size();
+        for (int i = 0; i < sparkleCount; i++) {
+            Sparkle currentSparkle = sparkleList.poll();
+            currentSparkle.draw(g2d);
+            currentSparkle.advance();
+            if (currentSparkle.isInsideBound(SCREEN_WIDTH, SCREEN_HEIGHT)){
+                sparkleList.add(currentSparkle);
+            }
+        }
+        if (isGameOver){
+            font = new Font("SansSerif", Font.BOLD, 28);
+            g2d.setFont(font);
+            fontMetric = g2d.getFontMetrics();
+            String gameoverLabel = "Game Over";
+            g2d.setColor(Color.RED);
+            g2d.drawString(gameoverLabel, (int)Math.round(SCREEN_WIDTH/2.0 - fontMetric.stringWidth(gameoverLabel)/2.0), (int)Math.round(95));
+        }
     }
 
     @Override
@@ -139,6 +170,9 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
             this.score = newScore;
         }
         int[][] board = BoardUtil.decode(boardCode);
+        if (BoardUtil.isGameOver(boardCode)){
+            isGameOver = true;
+        }
         
         //board transition
         int steps = 10;
@@ -186,17 +220,46 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
         List<Tile> tiles = new ArrayList();
         for(int i = 0; i<board.length; i++){
             for (int j = 0; j < board[i].length; j++) {
+                if (!hasSeen[board[i][j]]){            
+                    scheduleFireworks(i, j);
+                }
                 tiles.add(new Tile(BOARD_ANCHOR_X + MARGIN * (j+1) + j * TILE_LEN, BOARD_ANCHOR_Y + MARGIN * (i+1) + i * TILE_LEN, COLOR_LIST[board[i][j]], TILE_LEN, board[i][j]));
             }
         }
+        for(int i = 0; i<board.length; i++){
+            for (int j = 0; j < board[i].length; j++) {
+                hasSeen[board[i][j]] = true;
+            }
+        }
+        
         tileListQueue.add(tiles);
     }
 
+    private void scheduleFireworks(int row, int col){
+        int xCenter = BOARD_ANCHOR_X + MARGIN * (col+1) + col * TILE_LEN + (int)Math.round(TILE_LEN/2);
+        int yCenter = BOARD_ANCHOR_Y + MARGIN * (row+1) + row * TILE_LEN + (int)Math.round(TILE_LEN/2);
+        
+        int sparkleCount = 20;
+        
+        ThreadLocalRandom rand = ThreadLocalRandom.current();
+        
+        for(int i = 0; i<sparkleCount; i++){        
+            sparkleList.add(new Sparkle(
+                    xCenter, 
+                    yCenter, 
+                    rand.nextDouble(-15, 15), 
+                    rand.nextDouble(-20, 1), 
+                    new Color(rand.nextInt(146, 256), rand.nextInt(0, 150), rand.nextInt(0, 50)), 
+                    rand.nextInt(8, 15),
+                    rand.nextDouble(-0.5, 0.1)));
+        }
+    }
+    
     @Override
     public void start(long initialBoard, GameController controller) {
         this.controller = controller;
         
-        List<TileTransition> transitions = new ArrayList<>();
+        List<TileTransition> transitions =  new ArrayList<>();
         for(int i = 0; i<4; i++){
             for(int j = 0; j<4; j++){
                 int value = BoardUtil.getValueAt(initialBoard, (i<<2) + j);
@@ -207,7 +270,7 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
         }
         
         displayBoard(initialBoard, transitions, 0);
-        Timer timer = new Timer(10, this);
+        timer = new Timer(10, this);
         timer.start();
     }
 
