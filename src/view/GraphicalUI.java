@@ -40,7 +40,7 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
     private GameController controller;
     private int score = 0;
     private int scoreIncrement = 0;
-    private int incrementPos = 0;
+    private double incrementPos = 0;
     private int incrementAlpha = 0;
     
     private static final Color[] COLOR_LIST = {
@@ -99,7 +99,20 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
         fontMetric = g2d.getFontMetrics();
         String scoreValue = Integer.toString(score);
         g2d.drawString(scoreValue, 250 + labelLen, (int)Math.round(50 + fontMetric.getAscent() / 2.0));
+        int labelScoreLen = fontMetric.stringWidth(scoreValue);
         
+        //Score Increment
+        if (incrementAlpha > 0){
+            font = new Font("SansSerif", Font.BOLD, 24);
+            g2d.setFont(font);
+            fontMetric = g2d.getFontMetrics();
+            String incrementLabel = "+" + scoreIncrement;
+            g2d.setColor(new Color(255, 223, 61, incrementAlpha)); //orange emas
+            g2d.drawString(incrementLabel, 250 + labelLen + labelScoreLen, (int)Math.round(50 + fontMetric.getAscent() / 2.0 + incrementPos));
+            
+            incrementAlpha -= 6;
+            incrementPos -= 0.8;
+        }
         
         if (!tileListQueue.isEmpty()){
             List<Tile> tiles = tileListQueue.peek();
@@ -122,7 +135,7 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
         if (newScore != score){
             scoreIncrement = newScore - score;
             incrementAlpha = 255;
-            incrementPos = 60;
+            incrementPos = 0;
             this.score = newScore;
         }
         int[][] board = BoardUtil.decode(boardCode);
