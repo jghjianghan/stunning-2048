@@ -50,12 +50,7 @@ public class Tile {
         
         g2d.fill(scaleTile.createTransformedShape(tileShape));
         
-        if (value != 0){        
-            Map<?, ?> desktopHints = (Map<?, ?>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
-            if (desktopHints != null) {
-                g2d.setRenderingHints(desktopHints);
-            }
-            
+        if (value != 0){            
             g2d.setColor(textColor);
             Font font = new Font("SansSerif", Font.BOLD, (int)Math.round(scale * FONT_SIZE));
             g2d.setFont(font);

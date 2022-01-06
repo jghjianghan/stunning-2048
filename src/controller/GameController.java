@@ -31,7 +31,7 @@ public class GameController {
             board = result.getValue();
             score += result.getKey();
             
-            ui.displayBoard(board, transitions);
+            ui.displayBoard(board, transitions, score);
         }
         if (BoardUtil.isGameOver(board)){
             //show game over
