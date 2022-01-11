@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.BoardUtil;
 import model.Move;
 
@@ -37,7 +35,7 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
     private static final int MARGIN = 10;
     private static final int TILE_LEN = (BOARD_WIDTH -5 * MARGIN) / 4;
     
-    private boolean[] hasSeen;
+    private final boolean[] hasSeen;
     private Timer timer;
     int lastBoard;
     
@@ -119,8 +117,12 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
             g2d.setFont(font);
             fontMetric = g2d.getFontMetrics();
             String incrementLabel = "+" + scoreIncrement;
+            
             g2d.setColor(new Color(255, 223, 61, incrementAlpha)); //orange emas
-            g2d.drawString(incrementLabel, 250 + labelLen + labelScoreLen, (int)Math.round(50 + fontMetric.getAscent() / 2.0 + incrementPos));
+            g2d.drawString(
+                    incrementLabel, 
+                    250 + labelLen + labelScoreLen, 
+                    (int)Math.round(50 + fontMetric.getAscent() / 2.0 + incrementPos));
             
             incrementAlpha -= 6;
             incrementPos -= 0.8;
@@ -152,7 +154,10 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
             fontMetric = g2d.getFontMetrics();
             String gameoverLabel = "Game Over";
             g2d.setColor(Color.RED);
-            g2d.drawString(gameoverLabel, (int)Math.round(SCREEN_WIDTH/2.0 - fontMetric.stringWidth(gameoverLabel)/2.0), (int)Math.round(95));
+            g2d.drawString(
+                    gameoverLabel, 
+                    (int)Math.round(SCREEN_WIDTH/2.0 - fontMetric.stringWidth(gameoverLabel)/2.0),
+                    (int)Math.round(95));
         }
     }
 
@@ -179,7 +184,7 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
         
         for(int i=0; i<steps; i++){
             List<Tile> tiles = new ArrayList();
-            //prefill with emtpy tile
+            //prefill with empty tile
             for(int r = 0; r<board.length; r++){
                 for (int c = 0; c < board[r].length; c++) {
                     tiles.add(new Tile(

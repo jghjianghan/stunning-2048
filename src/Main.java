@@ -2,8 +2,6 @@
 import controller.GameController;
 import java.awt.Dimension;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import model.BoardUtil;
 import view.GraphicalUI;
 
 /**
@@ -18,6 +16,7 @@ public class Main {
         f.getContentPane().add("Center", panel);
         f.getContentPane().setPreferredSize(new Dimension(GraphicalUI.SCREEN_WIDTH, GraphicalUI.SCREEN_HEIGHT));
         f.pack();
+        f.setResizable(false);
         f.setVisible(true);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         

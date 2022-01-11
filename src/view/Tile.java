@@ -4,10 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.RoundRectangle2D;
-import java.util.Map;
 
 /**
  *
@@ -58,7 +56,10 @@ public class Tile {
             
             String strValue = Integer.toString(1 << value);
             
-            g2d.drawString(strValue, (int)(xPos + size/2.0 - fontMetric.stringWidth(strValue)/2.0), (int)(yPos + size/2.0 + fontMetric.getAscent()/2.0));
+            g2d.drawString(
+                    strValue,
+                    (int)(xPos + size/2.0 - fontMetric.stringWidth(strValue)/2.0), 
+                    (int)(yPos + size/2.0 + fontMetric.getAscent()/2.0));
         }
         
         g2d.setColor(prevColor);
