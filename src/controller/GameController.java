@@ -2,7 +2,7 @@
 package controller;
 
 import java.util.List;
-import javafx.util.Pair;
+import model.Pair;
 import model.BoardUtil;
 import model.Move;
 import view.TileTransition;
@@ -32,9 +32,6 @@ public class GameController {
             score += result.getKey();
             
             ui.displayBoard(board, transitions, score);
-        }
-        if (BoardUtil.isGameOver(board)){
-            //show game over
         }
     }
 }

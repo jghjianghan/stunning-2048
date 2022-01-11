@@ -3,7 +3,6 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import javafx.util.Pair;
 import view.TileTransition;
 
 /**
@@ -19,7 +18,7 @@ public class BoardUtil {
     [12][13][14][15]
    
     Dalam kode:
-    [15][14][13][12][11]...[2][1][0]
+    [15][14][13][12][11]...[2][1][0] (masing-masing 4 bit)
     */
     
     private static int lastNewPos;
