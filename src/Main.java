@@ -1,6 +1,8 @@
 
 import controller.GameController;
 import java.awt.Dimension;
+import java.net.URL;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import view.GraphicalUI;
 
@@ -15,6 +17,12 @@ public class Main {
         panel.setFocusable(true);
         f.getContentPane().add("Center", panel);
         f.getContentPane().setPreferredSize(new Dimension(GraphicalUI.SCREEN_WIDTH, GraphicalUI.SCREEN_HEIGHT));
+        
+        URL logoUrl = Main.class.getClassLoader().getResource("2048_logo.png");
+        ImageIcon imgLogo = new ImageIcon(logoUrl);
+        f.setIconImage(imgLogo.getImage());
+        f.setTitle("Stunning 2048 - Jiang Han (6181801034)");
+        
         f.pack();
         f.setResizable(false);
         f.setVisible(true);
