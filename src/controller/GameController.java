@@ -37,4 +37,10 @@ public class GameController {
             ui.displayBoard(BoardUtil.decode(board), transitions, score);
         }
     }
+    
+    public void restartGame(){
+        score = 0;
+        board = BoardUtil.generateInitialBoard();
+        ui.restart(BoardUtil.decode(board));
+    }
 }

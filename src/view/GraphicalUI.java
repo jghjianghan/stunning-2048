@@ -168,9 +168,11 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
     @Override
     public void displayBoard(int[][] board, List<TileTransition> transitionList, int newScore) {
         if (newScore != score){
-            scoreIncrement = newScore - score;
-            incrementAlpha = 255;
-            incrementPos = 0;
+            if (newScore > 0){
+                scoreIncrement = newScore - score;
+                incrementAlpha = 255;
+                incrementPos = 0;
+            }
             this.score = newScore;
         }
         
@@ -281,7 +283,18 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
     
     @Override
     public void restart(int[][] initialBoard){
+        isGameOver = false;
+        List<TileTransition> transitions =  new ArrayList<>();
+        for(int i = 0; i<4; i++){
+            for(int j = 0; j<4; j++){
+                int value = initialBoard[i][j];
+                if (value != 0){
+                    transitions.add(new TileTransition(i, j, i, j, value, 0, 1));
+                }
+            }
+        }
         
+        displayBoard(initialBoard, transitions, 0);
     }
     
     @Override
@@ -307,6 +320,9 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
                 break;
             case 39: //right
                 controller.moveBoard(Move.RIGHT);
+                break;
+            case 82: //R (restart)
+                controller.restartGame();
                 break;
         }
     }
