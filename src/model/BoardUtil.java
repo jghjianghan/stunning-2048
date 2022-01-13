@@ -72,6 +72,27 @@ public class BoardUtil {
         return board;
     }
     
+    /**
+     * Gets the exponent value at some particular position on a board from its coded representation
+     * @param code The coded representation of the board
+     * @param pos The position in the board (0-15). 0 is top-left, 15 is bottom right
+     * @return The exponent of the position. Zero exponent means the position is empty
+     */
+    public static int getValueAt(long code, int pos){
+        return (int)((code & (0xfl << (pos << 2))) >>> (pos << 2) );
+    }
+    
+    /**
+     * Sets the exponent value at some particular position on a board from its coded representation
+     * @param code The coded representation of the board
+     * @param pos The position in the board (0-15). 0 is top-left, 15 is bottom right
+     * @param value The new value to store
+     * @return The new code
+     */
+    public static long setValueAt(long code, int pos, int value){
+        return (code & (~(0xfl << (pos << 2)))) | ((long)value << (pos<<2));
+    }
+
     public static long generateInitialBoard() {
         Random rand = new Random();
         int pos1 = rand.nextInt(16);
@@ -83,18 +104,6 @@ public class BoardUtil {
         int value2 = (Math.random() >= 0.9) ? 2 : 1;
         
         return setValueAt(setValueAt(0, pos1, value1), pos2, value2);
-    }
-    
-    public static Move[] getAvailableMoves(long code){
-        List<Move> availableMoves = new ArrayList<>(4);
-        
-        for (Move move : Move.values()){
-            if (isMoveValid(code, move)){
-                availableMoves.add(move);
-            }
-        }       
-        
-        return availableMoves.toArray(new Move[0]);
     }
     
     public static boolean isMoveValid(long code, Move move){
@@ -151,6 +160,18 @@ public class BoardUtil {
         
         return false;
     }
+
+    public static Move[] getAvailableMoves(long code){
+        List<Move> availableMoves = new ArrayList<>(4);
+        
+        for (Move move : Move.values()){
+            if (isMoveValid(code, move)){
+                availableMoves.add(move);
+            }
+        }       
+        
+        return availableMoves.toArray(new Move[0]);
+    }    
     
     public static boolean isGameOver(long code){
         return getAvailableMoves(code).length == 0;
@@ -551,28 +572,7 @@ public class BoardUtil {
             int pos = emptyCells.get(rand.nextInt(emptyCells.size()));
             lastNewPos = pos;
             lastNewValue = value;
-            return new Pair(result.getKey(), setValueAt(code, pos, value));
+            return new Pair<>(result.getKey(), setValueAt(code, pos, value));
         }
-    }
-    
-    /**
-     * Gets the exponent value at some particular position on a board from its coded representation
-     * @param code The coded representation of the board
-     * @param pos The position in the board (0-15). 0 is top-left, 15 is bottom right
-     * @return The exponent of the position. Zero exponent means the position is empty
-     */
-    public static int getValueAt(long code, int pos){
-        return (int)((code & (0xfl << (pos << 2))) >>> (pos << 2) );
-    }
-    
-    /**
-     * Sets the exponent value at some particular position on a board from its coded representation
-     * @param code The coded representation of the board
-     * @param pos The position in the board (0-15). 0 is top-left, 15 is bottom right
-     * @param value The new value to store
-     * @return The new code
-     */
-    public static long setValueAt(long code, int pos, int value){
-        return (code & (~(0xfl << (pos << 2)))) | ((long)value << (pos<<2));
     }
 }

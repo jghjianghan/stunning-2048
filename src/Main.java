@@ -18,7 +18,8 @@ public class Main {
         f.getContentPane().add("Center", panel);
         f.getContentPane().setPreferredSize(new Dimension(GraphicalUI.SCREEN_WIDTH, GraphicalUI.SCREEN_HEIGHT));
         
-        URL logoUrl = Main.class.getClassLoader().getResource("2048_logo.png");
+        //Frame icon & title
+        URL logoUrl = Main.class.getClassLoader().getResource("images/2048_logo.png");
         ImageIcon imgLogo = new ImageIcon(logoUrl);
         f.setIconImage(imgLogo.getImage());
         f.setTitle("Stunning 2048 - Jiang Han (6181801034)");
