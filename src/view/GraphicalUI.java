@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadLocalRandom;
-import model.BoardUtil;
 import model.Move;
 
 /**
@@ -167,16 +166,12 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
     }
 
     @Override
-    public void displayBoard(long boardCode, List<TileTransition> transitionList, int newScore) {
+    public void displayBoard(int[][] board, List<TileTransition> transitionList, int newScore) {
         if (newScore != score){
             scoreIncrement = newScore - score;
             incrementAlpha = 255;
             incrementPos = 0;
             this.score = newScore;
-        }
-        int[][] board = BoardUtil.decode(boardCode);
-        if (BoardUtil.isGameOver(boardCode)){
-            isGameOver = true;
         }
         
         //board transition
@@ -261,24 +256,34 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
     }
     
     @Override
-    public void start(long initialBoard, GameController controller) {
+    public void start(int[][] board, GameController controller) {
         this.controller = controller;
         
         List<TileTransition> transitions =  new ArrayList<>();
         for(int i = 0; i<4; i++){
             for(int j = 0; j<4; j++){
-                int value = BoardUtil.getValueAt(initialBoard, (i<<2) + j);
+                int value = board[i][j];
                 if (value != 0){
                     transitions.add(new TileTransition(i, j, i, j, value, 0, 1));
                 }
             }
         }
         
-        displayBoard(initialBoard, transitions, 0);
+        displayBoard(board, transitions, 0);
         timer = new Timer(10, this);
         timer.start();
     }
 
+    @Override
+    public void showGameOver(){
+        isGameOver = true;
+    }
+    
+    @Override
+    public void restart(int[][] initialBoard){
+        
+    }
+    
     @Override
     public void keyTyped(KeyEvent arg0) {}
 

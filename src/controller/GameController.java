@@ -20,7 +20,7 @@ public class GameController {
     public GameController(UI ui){
         this.ui = ui;
         board = BoardUtil.generateInitialBoard();
-        ui.start(board, this);
+        ui.start(BoardUtil.decode(board), this);
     }
     
     public void moveBoard(Move move){
@@ -31,7 +31,10 @@ public class GameController {
             board = result.getValue();
             score += result.getKey();
             
-            ui.displayBoard(board, transitions, score);
+            if (BoardUtil.isGameOver(board)){
+                ui.showGameOver();
+            }
+            ui.displayBoard(BoardUtil.decode(board), transitions, score);
         }
     }
 }
