@@ -1,7 +1,7 @@
 package model;
 
 /**
- *
+ * Custom container for key-value pairs
  * @author Jiang Han
  */
 public class Pair<K, V> {

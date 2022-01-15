@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 import view.GraphicalUI;
 
 /**
- *
+ * The entry point of the application
  * @author Jiang Han
  */
 public class Main {

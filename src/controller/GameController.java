@@ -9,7 +9,8 @@ import view.TileTransition;
 import view.UI;
 
 /**
- *
+ * Controls the flow of the application.
+ * Bridges the communication between UI and the models
  * @author Jiang Han
  */
 public class GameController {

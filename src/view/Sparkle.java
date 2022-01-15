@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 
 /**
- *
+ * Models a firework sparkle to be drawn
  * @author Jiang Han
  */
 public class Sparkle {
@@ -26,6 +26,10 @@ public class Sparkle {
         this.sizeVector = sizeVector;
     }
     
+    /**
+     * Draws itself according to its attributes on a canvas
+     * @param g2d The Graphics2D (canvas) where the tile should be drawn
+     */
     public void draw(Graphics2D g2d){
         Color prevColor = g2d.getColor();
         g2d.setColor(color);
@@ -35,10 +39,19 @@ public class Sparkle {
         g2d.setColor(prevColor);
     }
     
+    /**
+     * Checks whether the sparkle is inside the screen or not
+     * @param screenWidth The width of the screen
+     * @param screenHeight The height of the screen
+     * @return Whether the sparkle is inside the screen or not
+     */
     public boolean isInsideBound(int screenWidth, int screenHeight){
         return xCenter - radius >= 0 && xCenter + radius <= screenWidth && yCenter-radius >= 0 && yCenter + radius <= screenHeight;
     }
     
+    /**
+     * Advances the attributes of the sparkle one step in time according to its vectors
+     */
     public void advance(){
         xCenter += xVector;
         yCenter += yVector;

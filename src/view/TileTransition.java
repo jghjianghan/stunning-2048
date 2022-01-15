@@ -1,7 +1,7 @@
 package view;
 
 /**
- *
+ * Models the visual transition of a tile
  * @author Jiang Han
  */
 public class TileTransition {

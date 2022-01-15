@@ -4,7 +4,7 @@ import controller.GameController;
 import java.util.List;
 
 /**
- *
+ * Interface for the user interface of the game
  * @author Jiang Han
  */
 public interface UI {

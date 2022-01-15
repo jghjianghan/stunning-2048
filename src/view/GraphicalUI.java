@@ -26,7 +26,7 @@ import javax.imageio.ImageIO;
 import model.Move;
 
 /**
- *
+ * The graphical user interface for this application
  * @author Jiang Han
  */
 public final class GraphicalUI extends JPanel implements UI, ActionListener, KeyListener, MouseListener {
@@ -40,19 +40,24 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
     private static final int MARGIN = 10;
     private static final int TILE_LEN = (BOARD_WIDTH - 5 * MARGIN) / 4;
 
+    //Stores whether the tile of a particular value has been seen or not
     private final boolean[] hasSeen;
+    
     private Timer timer;
-    int lastBoard;
 
+    //Info button attributes
     private int infoButtonCenterX;
     private final int infoButtonCenterY = 60, infoButtonRadius = 20;
     Image infoIcon;
 
+    //Queues the list of objects to be drawn in one painting. Can be added or taken out concurrently
     private final ConcurrentLinkedQueue<List<Tile>> tileListQueue = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<Sparkle> sparkleList = new ConcurrentLinkedQueue<>();
 
     private GameController controller;
     private int score = 0;
+    
+    //Score increment attributes
     private int scoreIncrement = 0;
     private double incrementPos = 0;
     private int incrementAlpha = 0;
@@ -80,10 +85,12 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
 
     public GraphicalUI() {
         hasSeen = new boolean[20];
+        //Assumes that empty tile, 2, 4, and 8 tile has appeared before
         for (int i = 0; i <= 3; i++) {
             hasSeen[i] = true;
         }
 
+        //Loads the info icon image
         URL infoIconUrl = getClass().getClassLoader().getResource("images/information-icon.png");
         if (infoIconUrl == null) {
             System.out.println(infoIconUrl);
@@ -98,6 +105,13 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
         }
     }
 
+    /**
+     * Displays a game state with the transitions leading to this state.
+     * Queues several list of tiles to be drawn into tileListQueue.
+     * @param board
+     * @param transitionList
+     * @param newScore 
+     */
     @Override
     public void displayBoard(int[][] board, List<TileTransition> transitionList, int newScore) {
         if (newScore != score) {
@@ -170,6 +184,11 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
         tileListQueue.add(tiles);
     }
 
+    /**
+     * Queues in the list of sparkles to be drawn at a certain board position.
+     * @param row Row position in the board
+     * @param col Column position in the board
+     */
     private void scheduleFireworks(int row, int col) {
         int xCenter = BOARD_ANCHOR_X + MARGIN * (col + 1) + col * TILE_LEN + (int) Math.round(TILE_LEN / 2);
         int yCenter = BOARD_ANCHOR_Y + MARGIN * (row + 1) + row * TILE_LEN + (int) Math.round(TILE_LEN / 2);
@@ -284,6 +303,7 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
         isGameOver = true;
     }
 
+    //Starts the game
     @Override
     public void start(int[][] board, GameController controller) {
         addKeyListener(this);
@@ -305,6 +325,7 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
         timer.start();
     }
 
+    //Restarts the game
     @Override
     public void restart(int[][] initialBoard) {
         isGameOver = false;
@@ -321,6 +342,7 @@ public final class GraphicalUI extends JPanel implements UI, ActionListener, Key
         displayBoard(initialBoard, transitions, 0);
     }
 
+    //Displays the Help dialog box
     private void showHelp() {
         JOptionPane.showMessageDialog(null,
                 "Gunakan panah di keyboard untuk menggerakkan tile.\n"

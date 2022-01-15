@@ -8,15 +8,15 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.RoundRectangle2D;
 
 /**
- *
+ * Models a rounded-rectangle tile that's drawn on the screen.
  * @author Jiang Han
  */
 public class Tile {
     int xPos, yPos, size, value;
-    private Color textColor = new Color(5, 2, 48);
+    private final Color textColor = new Color(5, 2, 48);
     Color color;
     double scale;
-    private int radius = 10;
+    private final int radius = 10;
     private final int FONT_SIZE = 28;
     
     public Tile(int xPos, int yPos, Color color, int size, int value) {
@@ -32,6 +32,10 @@ public class Tile {
         this.scale = scale;
     }
     
+    /**
+     * Draws itself according to its attributes on a canvas
+     * @param g2d The Graphics2D (canvas) where the tile should be drawn
+     */
     public void draw(Graphics2D g2d){
         Color prevColor = g2d.getColor();
         g2d.setColor(color);
@@ -63,6 +67,5 @@ public class Tile {
         }
         
         g2d.setColor(prevColor);
-        
     }
 }

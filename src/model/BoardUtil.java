@@ -6,7 +6,8 @@ import java.util.Random;
 import view.TileTransition;
 
 /**
- * 
+ * An utility class that handles the representation of the board.
+ * Also simulates the mechanism of the game and scoring system.
  * @author Jiang Han
  */
 public class BoardUtil {
@@ -93,6 +94,11 @@ public class BoardUtil {
         return (code & (~(0xfl << (pos << 2)))) | ((long)value << (pos<<2));
     }
 
+    /**
+     * Generates the starting board (initial state) for the game.
+     * Game starts with 2 tiles (with probability of 90% valued 2 and 10% valued 4) on random positions.
+     * @return The initial board
+     */
     public static long generateInitialBoard() {
         Random rand = new Random();
         int pos1 = rand.nextInt(16);
@@ -106,6 +112,14 @@ public class BoardUtil {
         return setValueAt(setValueAt(0, pos1, value1), pos2, value2);
     }
     
+    /**
+     * Checks whether a particular move is valid in a game state.
+     * A move is consider valid if and only if it changes the game state.
+     * In other words, some times must change position or change value (due to merging)
+     * @param code Current game state
+     * @param move The move to be checked
+     * @return Whether the move valid in current state
+     */
     public static boolean isMoveValid(long code, Move move){
         switch(move){
             case LEFT:
@@ -161,6 +175,11 @@ public class BoardUtil {
         return false;
     }
 
+    /**
+     * Gets an array of moves that are valid in a particular game state
+     * @param code The current game state
+     * @return An array of available moves in current state
+     */
     public static Move[] getAvailableMoves(long code){
         List<Move> availableMoves = new ArrayList<>(4);
         
@@ -173,10 +192,23 @@ public class BoardUtil {
         return availableMoves.toArray(new Move[0]);
     }    
     
+    /**
+     * Checks whether a game is over or not.
+     * In other words, checks whether a game state is a terminal state.
+     * Game is considered over when 
+     * @param code The game state to check
+     * @return Whether the game is over (state is terminal state)
+     */
     public static boolean isGameOver(long code){
         return getAvailableMoves(code).length == 0;
     }
     
+    /**
+     * Simulate a sliding effect on the board (without the addition of new tile).
+     * @param code The game state
+     * @param move The move to apply on the state
+     * @return A pair of score result from the action and the next game state code
+     */
     public static Pair<Integer, Long> slideTiles(long code, Move move) {
         int point = 0;
         switch(move){
@@ -344,6 +376,13 @@ public class BoardUtil {
         return new Pair<>(point, code);
     }
     
+    /**
+     * Generate the list of tile transitions that occur
+     * when an action is applied on a game state (without the transition of a new tile).
+     * @param code The current game state
+     * @param move The move to be applied
+     * @return List of tile transitions caused by a move applied to a game state
+     */
     public static List<TileTransition> generateSlidingTransitions(long code, Move move){
         List<TileTransition> transitions = new ArrayList<>();
         int newRow = lastNewPos / 4;
@@ -553,6 +592,12 @@ public class BoardUtil {
         return transitions;
     }
     
+    /**
+     * Actually applies a move to a game state (with addition of a new tile)
+     * @param code The current game state
+     * @param move The move to be applied
+     * @return Pair of score caused by the action and the next game state
+     */
     public static Pair<Integer, Long> applyMove(long code, Move move){
         Pair<Integer, Long> result = slideTiles(code, move);
         
